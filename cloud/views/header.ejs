@@ -32,13 +32,23 @@
                 <p>Get your own Picture of the Month Polls App !</p>
                 <nav id="nav">
                     <ul>
-                        <li><a class="icon fa-home" href="/"><span>Introduction</span></a></li>
+                    <% if (currentUser) { %>
+                        <li><a class="icon fa-home" href="/"><span>Account: <b><%= currentUser.get("username") %></b></span></a></li>
                         <li>
                             <a href="" class="icon fa-bar-chart-o"><span>Archives</span></a>
                             <ul>
                                 <li><a href="#">Novembre 2015</a></li>
                             </ul>
                         </li>
+                    <% } else { %>
+                        <li><a class="icon fa-home" href="/"><span>Welcome</span></a></li>
+                        <li>
+                            <a href="" class="icon fa-bar-chart-o"><span>Archives</span></a>
+                            <ul>
+                                <li><a href="#">Novembre 2015</a></li>
+                            </ul>
+                        </li>
+                    <% } %>
                     </ul>
                 </nav>
             </div>
