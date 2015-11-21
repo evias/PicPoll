@@ -225,6 +225,7 @@ app.post('/signup', function(request, response)
   var username = request.body.username;
   var email    = request.body.username;
   var password = request.body.password;
+  var pwconfirm = request.body.pwconfirm;
 
   var formValues = {
     "username": username,
@@ -238,6 +239,9 @@ app.post('/signup', function(request, response)
   if (!password || !password.length)
     errors.push("The Password may not be empty.");
 
+  if (password != pwconfirm)
+    errors.push("The Passwords do not match !");
+
   if (errors.length)
   // refresh with error messages displayed
     response.render("signup", {
@@ -250,9 +254,6 @@ app.post('/signup', function(request, response)
     currentUser.set("username", username);
     currentUser.set("email", email);
     currentUser.set("password", password);
-    currentUser.set("officeName", office);
-    currentUser.set("countryISO", country);
-    currentUser.set("areaCode", area);
 
     currentUser.signUp(null, {
     success: function(currentUser) {
