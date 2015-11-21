@@ -11,13 +11,13 @@ Please make sure to have the Parse Command-Line Tools installed and configured
 as described here: https://www.parse.com/docs/cloudcode/guide#command-line
 
 For this installation example I will assume that you have already created
-a Parse App with the name "myPicOfTheMonth".
+a Parse App with the name "myPicPollApp".
 
-First thing to do to be able to install the TwilioTreeBot App is to clone
+First thing to do to be able to install the PicPoll App is to clone
 the git repository with the source code.
 
-    $ git clone https://github.com/evias/TwilioTreeBot.git
-    $ cd TwilioTreeBot
+    $ git clone https://github.com/evias/PicPoll.git
+    $ cd PicPoll
 
 Now that you have the source code, you will see a public/ directory and a
 cloud/ directory. These two directories are important for the CloudCode API
@@ -25,11 +25,11 @@ provided by Parse.com. See following link for more details about CloudCode
 Apps on Parse: https://www.parse.com/docs/cloudcode/guide
 
 The last step of the installation is to deploy the application to the Parse
-App "myPicOfTheMonth" you created earlier. The command-line tools from Parse
+App "myPicPollApp" you created earlier. The command-line tools from Parse
 make this process very easy:
 
-    $ parse new -a myPicOfTheMonth
-    $ parse deploy myPicOfTheMonth
+    $ parse new -a myPicPollApp
+    $ parse deploy myPicPollApp
 
 Your Feedback Management app is now online !
 
