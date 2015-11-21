@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Picpoll by evias</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Picpoll</h1>
+        <p>PicPoll is a nodeJS + Parse CloudCode App with Pictures Polls features (Voting &amp; Statistics)</p>
+
+        <p class="view"><a href="https://github.com/evias/PicPoll">View the Project on GitHub <small>evias/PicPoll</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/evias/PicPoll/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/evias/PicPoll/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/evias/PicPoll">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a id="eviaspicpoll" class="anchor" href="#eviaspicpoll" aria-hidden="true"><span class="octicon octicon-link"></span></a>evias/PicPoll</h2>
+
+<p>PicPoll is a Parse CloudCode App providing with CloudCode Functions
+and a nodeJS (+ express) web application. This package provides with 
+Pic of the Month features such as Voting, Statistics, Hot for the
+Moment and Hashtag features.</p>
+
+<p>A Demo of this App deployed to a Parse Hosting can be found at following
+URL : <a href="https://picpoll.parseapp.com">https://picpoll.parseapp.com</a></p>
+
+<p>Deployment is very easy as the App can be deployed on the free Parse.com
+tiers. You'll find more informations about this here: <a href="https://www.parse.com/docs/cloudcode">https://www.parse.com/docs/cloudcode</a></p>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<p>Please make sure to have the Parse Command-Line Tools installed and configured
+as described here: <a href="https://www.parse.com/docs/cloudcode/guide#command-line">https://www.parse.com/docs/cloudcode/guide#command-line</a></p>
+
+<p>For this installation example I will assume that you have already created
+a Parse App with the name "myPicPollApp".</p>
+
+<p>First thing to do to be able to install the PicPoll App is to clone
+the git repository with the source code.</p>
+
+<pre><code>$ git clone https://github.com/evias/PicPoll.git
+$ cd PicPoll
+</code></pre>
+
+<p>Now that you have the source code, you will see a public/ directory and a
+cloud/ directory. These two directories are important for the CloudCode API
+provided by Parse.com. See following link for more details about CloudCode
+Apps on Parse: <a href="https://www.parse.com/docs/cloudcode/guide">https://www.parse.com/docs/cloudcode/guide</a></p>
+
+<p>The last step of the installation is to deploy the application to the Parse
+App "myPicPollApp" you created earlier. The command-line tools from Parse
+make this process very easy:</p>
+
+<pre><code>$ parse new -a myPicPollApp
+$ parse deploy myPicPollApp
+</code></pre>
+
+<p>Your Feedback Management app is now online !</p>
+
+<h3>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h3>
+
+<pre><code>* jQuery 1.11
+* Parse CloudCode
+</code></pre>
+
+<h3>
+<a id="hints--advices" class="anchor" href="#hints--advices" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hints / Advices</h3>
+
+<p>Using git, when you will modify your .parse.local file of the clone in order
+to configure your parse command line tools to use your own Parse App, git will
+see the .parse.local file as modified. To avoid having to communicate my Parse
+App details, I use following command to mark the .parse.local file unchanged:</p>
+
+<pre><code>$ git update-index [--assume-unchanged|--no-assume-unchanged]
+</code></pre>
+
+<h3>
+<a id="git-branching" class="anchor" href="#git-branching" aria-hidden="true"><span class="octicon octicon-link"></span></a>Git Branching</h3>
+
+<p>2 git branches will usually be updated in this repository, being the branch
+<em>master</em> for releases (see git tags) and the branch <em>develop</em> for development
+of features. Hotfixes might branch from <em>master</em> but will usually be tackled
+from a <em>develop</em> branch or sub-branch.</p>
+
+<h3>
+<a id="support--contact" class="anchor" href="#support--contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support / Contact</h3>
+
+<p>You can contact me anytime at my e-mail address and I will be glad to answer
+any type of questions related to this project.</p>
+
+<p>Contributions are welcome if you see anything missing or have detected a
+bug, want to develop a new API class, or whatever, I will be glad to respond
+to pull requests!</p>
+
+<p>Cheers,
+Greg</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/evias">evias</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
