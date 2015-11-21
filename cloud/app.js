@@ -281,9 +281,9 @@ app.post('/signup', function(request, response)
  * this handler is where we save the session
  * vote for the given picture.
  **/
-app.post("saveVote", function(request, response)
+app.post("/saveVote", function(request, response)
 {
-  response.send("Coming soon..");
+  response.send("OK");
 });
 
 // Attach the Express app to Cloud Code.
