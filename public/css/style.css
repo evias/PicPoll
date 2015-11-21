@@ -885,4 +885,11 @@
 			background: #6FED6A;
 		}
 
-		.hidden { display: none;}
+/*********************************************************************************/
+/* Modifications by Grégory Saive                                                */
+/*********************************************************************************/
+
+.hidden { display: none;}
+input[type="button"],
+input[type="submit"],
+input[type="reset"],

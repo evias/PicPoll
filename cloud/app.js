@@ -22,6 +22,7 @@ limitations under the License.
  * @link https://picpoll.parseapp.com
 **/
 
+models = require("cloud/models.js");
 express = require('express');
 app = express();
 
@@ -55,19 +56,36 @@ app.use(express.cookieSession({
  **/
 app.use(function(req, res, next)
 {
-    Parse.User
-      .become(req.session.sessionToken ? req.session.sessionToken : "invalidSessionToken")
-      .then(
-        function(currentUser) {
-          // currentUser now contains the BROWSER's logged in user.
-          // Parse.User.current() for `req` will return the browsers user as well.
+  Parse.User
+    .become(req.session.sessionToken ? req.session.sessionToken : "invalidSessionToken")
+    .then(
+      function(currentUser) {
+        // currentUser now contains the BROWSER's logged in user.
+        // Parse.User.current() for `req` will return the browsers user as well.
 
-          next();
-        },
-        function(error) {
-          // not logged in => will result in redirection to /signin
-          next();
-        });
+        next();
+      },
+      function(error) {
+        // not logged in => will result in redirection to /signin
+        next();
+      });
+});
+
+/**
+ * Fill default local request variables.
+ * This method fills the variables :
+ * - currentUser   : Parse.User instance of boolean false
+ * - currentMonth  : date String in format "mmYYYY"
+ **/
+app.use(function(req, res, next)
+{
+  var currentUser = Parse.User.current();
+  if (! currentUser)
+    currentUser = false;
+
+  res.locals.currentUser  = currentUser;
+  res.locals.currentMonth = models.Month.getCurrentMonth();
+  next();
 });
 
 /*******************************************************************************
@@ -84,10 +102,6 @@ app.use(function(req, res, next)
  **/
 app.get('/', function(request, response)
 {
-  var currentUser = Parse.User.current();
-  if (! currentUser)
-    currentUser = false;
-
   var error   = request.query.error;
   var success = request.query.success;
 
@@ -96,7 +110,6 @@ app.get('/', function(request, response)
     success: function (cloudResponse)
     {
       response.render('homepage', {
-        "currentUser": currentUser,
         "month": cloudResponse.month,
         "pictures": cloudResponse.pictures,
         "errorMessage": error ? unescape(error) : false,
@@ -120,11 +133,9 @@ app.get('/signin', function(request, response)
   var currentUser = Parse.User.current();
   if (currentUser)
     response.redirect("/");
-  else {
+  else
     response.render('login', {
-      "currentUser": false,
       "errorMessage": false});
-  }
 });
 
 /**
@@ -143,7 +154,6 @@ app.get('/signup', function(request, response)
       "email": "",
     };
     response.render('signup', {
-      "currentUser": false,
       "formValues": formValues,
       "errorMessage": false});
   }
@@ -169,11 +179,7 @@ app.get('/signout', function(request, response)
  **/
 app.get('/terms-and-conditions', function(request, response)
 {
-  var currentUser = Parse.User.current();
-  if (! currentUser)
-    currentUser = false;
-
-  response.render('terms', {"currentUser": currentUser});
+  response.render('terms', {});
 });
 
 /*******************************************************************************
@@ -208,7 +214,6 @@ app.post('/signin', function(request, response)
       request.session = null;
 
       response.render('login', {
-        "currentUser": false,
         "errorMessage": error.message});
     }
   });
@@ -225,6 +230,7 @@ app.post('/signup', function(request, response)
   var username = request.body.username;
   var email    = request.body.username;
   var password = request.body.password;
+  var pwconfirm = request.body.pwconfirm;
 
   var formValues = {
     "username": username,
@@ -238,10 +244,12 @@ app.post('/signup', function(request, response)
   if (!password || !password.length)
     errors.push("The Password may not be empty.");
 
+  if (password != pwconfirm)
+    errors.push("The Passwords do not match !");
+
   if (errors.length)
   // refresh with error messages displayed
     response.render("signup", {
-      "currentUser": false,
       "formValues": formValues,
       "errorMessage": errors.join(" ", errors)});
   else {
@@ -250,9 +258,6 @@ app.post('/signup', function(request, response)
     currentUser.set("username", username);
     currentUser.set("email", email);
     currentUser.set("password", password);
-    currentUser.set("officeName", office);
-    currentUser.set("countryISO", country);
-    currentUser.set("areaCode", area);
 
     currentUser.signUp(null, {
     success: function(currentUser) {
@@ -268,7 +273,6 @@ app.post('/signup', function(request, response)
       request.session = null;
 
       response.render('signup', {
-        "currentUser": false,
         "formValues": formValues,
         "errorMessage": error.message});
     }});

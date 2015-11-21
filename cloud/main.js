@@ -21,40 +21,9 @@ limitations under the License.
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link https://picpoll.parseapp.com
 **/
+models = require('cloud/models.js');
+
 require('cloud/app.js');
-
-/*******************************************************************************
- * Models classes definition for PicPoll
- * @link https://picpoll.parseapp.com
- *******************************************************************************/
-/**
- * Model class Picture
- * This class describes a Feedback Customer in the Parse App.
- * It simply extends the Parse.Object object with no method
- * descriptions as of now.
- **/
-var Picture = Parse.Object.extend("Picture",
-  {},
-  {}
-);
-/* end Model Picture */
-
-var Month = Parse.Object.extend("Picture",
-  {},
-  {
-    getCurrentMonth: function()
-    {
-      var dt = new Date();
-      var mon  = dt.getMonth() + 1; mon = mon < 10 ? "0" + "" + mon : mon;
-      var year = dt.getFullYear();
-
-      return "" + mon + "" + year;
-    }
-  }
-);
-
-// Make sure our Models are loaded in queries.
-Parse.Object.registerSubclass("Picture", Picture);
 
 /*******************************************************************************
  * Parse CloudCode Functions definition for PicPoll
@@ -77,8 +46,8 @@ Parse.Cloud.define("ping", function(request, response)
  **/
 Parse.Cloud.define("listPictures", function(request, response)
 {
-  var pictures = new Parse.Query(Picture)
-  pictures.equalTo("month", Month.getCurrentMonth());
+  var pictures = new Parse.Query(models.Picture)
+  pictures.equalTo("month", models.Month.getCurrentMonth());
   pictures.descending("createdAt");
   pictures.find({
     success: function(pictures)
@@ -88,7 +57,7 @@ Parse.Cloud.define("listPictures", function(request, response)
 
       response.success({
         "result": true,
-        "month": Month.getCurrentMonth(),
+        "month": models.Month.getCurrentMonth(),
         "pictures": pictures
       });
     }
