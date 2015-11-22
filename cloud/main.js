@@ -16,12 +16,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
  *
  * @package PicPoll
- * @subpackage Parse CloudCode Functions
+ * @subpackage CloudCode
  * @author Grégory Saive <greg@evias.be>
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link https://picpoll.parseapp.com
 **/
 models = require('cloud/models.js');
+core   = require('cloud/core.js');
 
 require('cloud/app.js');
 
@@ -47,7 +48,7 @@ Parse.Cloud.define("ping", function(request, response)
 Parse.Cloud.define("listPictures", function(request, response)
 {
   var pictures = new Parse.Query(models.Picture)
-  pictures.equalTo("month", models.Month.getCurrentMonth());
+  pictures.equalTo("month", core.Month.getCurrentMonth());
   pictures.descending("createdAt");
   pictures.find({
     success: function(pictures)
@@ -57,7 +58,7 @@ Parse.Cloud.define("listPictures", function(request, response)
 
       response.success({
         "result": true,
-        "month": models.Month.getCurrentMonth(),
+        "month": core.Month.getCurrentMonth(),
         "pictures": pictures
       });
     }

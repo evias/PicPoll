@@ -16,13 +16,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
  *
  * @package PicPoll
- * @subpackage Parse CloudCode Functions
+ * @subpackage Frontend
  * @author Grégory Saive <greg@evias.be>
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link https://picpoll.parseapp.com
 **/
 
-models = require("cloud/models.js");
+models  = require("cloud/models.js");
+core    = require("cloud/core.js");
 express = require('express');
 app = express();
 
@@ -84,7 +85,7 @@ app.use(function(req, res, next)
     currentUser = false;
 
   res.locals.currentUser  = currentUser;
-  res.locals.currentMonth = models.Month.getCurrentMonth();
+  res.locals.currentMonth = core.Month.getCurrentMonth();
   next();
 });
 
