@@ -24,6 +24,7 @@ limitations under the License.
 
 models  = require("cloud/models.js");
 core    = require("cloud/core.js");
+crypto  = require('crypto');
 express = require('express');
 app = express();
 
@@ -288,7 +289,24 @@ app.post('/signup', function(request, response)
  **/
 app.post("/saveVote", function(request, response)
 {
-  response.send("OK");
+  var pictureId = request.body.voting;
+  var ipAddress = request.connection.remoteAddress;
+  var userAgent = request.headers['user-agent'];
+  var userHash  = crypto.createHash("sha1")
+                        .update(userAgent + "@" + ipAddress)
+                        .digest("hex");
+
+  Parse.Cloud.run("saveVote", {
+    "pictureId": pictureId,
+    "userHash": userHash
+  }, {
+    success: function (cloudResponse) {
+      response.send({"result": true});
+    },
+    error: function (cloudResponse) {
+      response.send({"result": false, "error": cloudResponse.message});
+    }
+  });
 });
 
 // Attach the Express app to Cloud Code.

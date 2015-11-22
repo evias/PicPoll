@@ -64,3 +64,27 @@ Parse.Cloud.define("listPictures", function(request, response)
     }
   });
 });
+
+Parse.Cloud.define("saveVote", function(request, response)
+{
+  var pictureId  = request.params.pictureId;
+  var userHash   = request.params.userHash;
+
+  // load Picture pointer, then insert
+  // a new Vote entry.
+  var thePicture = new Parse.Query(models.Picture);
+  thePicture.get(pictureId, {
+  success: function(thePicture) {
+    var theVote = new models.Vote();
+    theVote.set("picture", thePicture);
+    theVote.set("userHash", userHash);
+    theVote.save(null, {
+    success: function(theVote) {
+      response.success({"result": true, "vote": theVote});
+    },
+    error: function(error) { response.error(error.message); }
+    });
+  },
+  error: function(error) { response.error(error.message); }
+  });
+});

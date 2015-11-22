@@ -24,9 +24,6 @@ limitations under the License.
 
 /**
  * Model class Picture
- * This class describes a Feedback Customer in the Parse App.
- * It simply extends the Parse.Object object with no method
- * descriptions as of now.
  **/
 var Picture = Parse.Object.extend("Picture",
   {},
@@ -34,9 +31,20 @@ var Picture = Parse.Object.extend("Picture",
 );
 /* end Model Picture */
 
+/**
+ * Model class Vote
+ **/
+var Vote = Parse.Object.extend("Vote",
+  {},
+  {}
+);
+/* end Model Vote */
+
 // Make sure our Models are loaded in queries.
 Parse.Object.registerSubclass("Picture", Picture);
+Parse.Object.registerSubclass("Vote", Vote);
 
 exports.Picture = Picture;
+exports.Vote    = Vote ;
 
 module.exports = exports;
