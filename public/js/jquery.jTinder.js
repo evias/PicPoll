@@ -57,7 +57,7 @@
 			current_pane = index;
 		},
 
-		next: function () {
+		next: function (action) {
 			/**
 			 * Pull request on jTinder (@see https://github.com/do-web/jTinder)
 			 * Integrate of pull request by Greg Saive <greg@evias.be>
@@ -68,13 +68,13 @@
 			//return this.showPane(current_pane - 1);
 
 			$that.settings.onBeforeNext
-				&& $that.settings.onBeforeNext(current_pane);
+				&& $that.settings.onBeforeNext(current_pane, action);
 
 			!current_pane && $that.settings.onFinish && $that.settings.onFinish();
 			var showResult = this.showPane(current_pane - 1);
 
 			$that.settings.onAfterNext
-				&& $that.settings.onAfterNext(current_pane);
+				&& $that.settings.onAfterNext(current_pane, action);
 			return showResult;
 		},
 
@@ -83,7 +83,7 @@
 				if($that.settings.onDislike) {
 					$that.settings.onDislike(panes.eq(current_pane));
 				}
-				$that.next();
+				$that.next("dislike");
 			});
 		},
 
@@ -92,7 +92,7 @@
 				if($that.settings.onLike) {
 					$that.settings.onLike(panes.eq(current_pane));
 				}
-				$that.next();
+				$that.next("like");
 			});
 		},
 
@@ -176,7 +176,7 @@
 									//$that.settings.onLike(panes.eq(current_pane));
 									$that.settings.onLike(current_pane_elem);
 								}
-								$that.next();
+								$that.next("like");
 							});
 						} else {
 							//@see #1bc58d
@@ -187,7 +187,7 @@
 									//$that.settings.onDislike(panes.eq(current_pane));
 									$that.settings.onDislike(current_pane_elem);
 								}
-								$that.next();
+								$that.next("dislike");
 							});
 						}
 					} else {
