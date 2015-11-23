@@ -65,6 +65,11 @@ Parse.Cloud.define("listPictures", function(request, response)
   });
 });
 
+/**
+ * The saveVote Parse CloudCode Functions responses
+ * with a JSON response containing a 'result' boolean
+ * and a 'vote' object in case of a valid save action.
+ **/
 Parse.Cloud.define("saveVote", function(request, response)
 {
   var pictureId  = request.params.pictureId;
@@ -75,15 +80,24 @@ Parse.Cloud.define("saveVote", function(request, response)
   var thePicture = new Parse.Query(models.Picture);
   thePicture.get(pictureId, {
   success: function(thePicture) {
-    var theVote = new models.Vote();
-    theVote.set("picture", thePicture);
-    theVote.set("userHash", userHash);
-    theVote.save(null, {
-    success: function(theVote) {
-      response.success({"result": true, "vote": theVote});
-    },
-    error: function(error) { response.error(error.message); }
-    });
+
+    // save new vote for picture
+    var cntVotes = thePicture.get("countVotes") + 1;
+    thePicture.set("countVotes", cntVotes);
+    thePicture.save(null, {
+    success: function(thePicture) {
+      var theVote = new models.Vote();
+      theVote.set("picture", thePicture);
+      theVote.set("userHash", userHash);
+      theVote.save(null, {
+      success: function(theVote) {
+        response.success({
+          "result": true,
+          "vote": theVote});
+      },
+      error: function(error) { response.error(error.message); }
+      });
+    }});
   },
   error: function(error) { response.error(error.message); }
   });

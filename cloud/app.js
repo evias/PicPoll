@@ -85,8 +85,15 @@ app.use(function(req, res, next)
   if (! currentUser)
     currentUser = false;
 
+  var ipAddress = req.connection.remoteAddress;
+  var userAgent = req.headers['user-agent'];
+  var userHash  = crypto.createHash("sha1")
+                        .update(userAgent + "@" + ipAddress)
+                        .digest("hex");
+
   res.locals.currentUser  = currentUser;
   res.locals.currentMonth = core.Month.getCurrentMonth();
+  res.locals.userHash     = userHash;
   next();
 });
 
@@ -292,9 +299,16 @@ app.post("/saveVote", function(request, response)
   var pictureId = request.body.voting;
   var ipAddress = request.connection.remoteAddress;
   var userAgent = request.headers['user-agent'];
+
+  var dtObject  = new Date();
+  var dateStr   = dtObject.getDate()
+                + dtObject.getMonth()
+                + dtObject.getFullYear();
+  var hashStr   = userAgent + "@" + ipAddress + " (" + dateStr + ")";
+
+  // create SHA-1 hash for voting user
   var userHash  = crypto.createHash("sha1")
-                        .update(userAgent + "@" + ipAddress)
-                        .digest("hex");
+                        .update(hashStr).digest("hex");
 
   Parse.Cloud.run("saveVote", {
     "pictureId": pictureId,
