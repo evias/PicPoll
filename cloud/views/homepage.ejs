@@ -1,79 +1,59 @@
 
 <%- include header -%>
 
+<link rel="stylesheet" type="text/css" href="/css/jTinder.css">
+<script type="text/javascript" src="/js/jquery.transform2d.js"></script>
+<script type="text/javascript" src="/js/jquery.jTinder.js"></script>
+
     <% if (! pictures.length) { %>
 
     <% } else { %>
+
+<div class="wrap">
+    <div id="picpollSlider-<%= uniqueId %>" class="picpollSlider">
+        <ul>
         <% for (var i = 0; i < pictures.length; i++) {
             var pic = pictures[i];
             %>
-            <article class="box post">
-                <header>
-                    <h2><%= pic.get("title") %></h2>
-                </header>
-                <a href="/saveVote" class="button icon fa-file do-vote" data-vote="<%= pic.id %>">
-                    <span>Vote</span>&nbsp;<span>(<%= pic.get("countVotes") %>)</span></a><br />
-                <span class="image featured monthly">
-                    <img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>"
-                         alt="<%= pic.get("title") %>" /></span>
-                <h3><%= pic.get("title") %></h3>
-                <p><%= pic.get("description") %></p>
-            </article>
+            <li class="swiperPane pane1" data-vote="<%= pic.id %>">
+                <div><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
+                <div><%= pic.get("title") %></div>
+                <div class="smallText"><%= pic.get("description") %></div>
+                <div class="smallText">
+                    <span><%= pic.get("countVotes") %></span><span> Vote(s)</span>
+                </div>
+                <div class="like"></div>
+                <div class="dislike"></div>
+            </li>
         <% } %>
+        </ul>
+    </div>
+</div>
+
+<div class="actions">
+    <a href="#" class="like"><i></i></a>
+    <a href="#" class="dislike"><i></i></a>
+</div>
+
     <% } %>
 
 <script type="text/javascript">
-var disableVoting = function(className)
-{
-    $("a." + className).off("click");
-    $("a." + className).click(function(e)
-    {
-        e.preventDefault();
+$("#picpollSlider-<%= uniqueId %>").jTinder({
+    animationRevertSpeed: 200,
+    animationSpeed: 400,
+    threshold: 1,
+    likeSelector: '.like',
+    dislikeSelector: '.dislike'
+});
 
-        $(this).html("Nice try :o]");
+$('.actions .like').click(function(e){
+    e.preventDefault();
+    $("#picpollSlider-<%= uniqueId %>").jTinder("like");
+});
 
-        return false;
-    });
-};
-
-var enableVoting = function(className)
-{
-    $("a." + className).click(function(e)
-    {
-        e.preventDefault();
-
-        var button   = $(this);
-        var resp_ctr = $(this).siblings(".vote-response").first();
-        var cnt_ctr  = $(this).siblings(".cnt-votes").find(".cnt").first();
-        var vote_for = $(this).attr("data-vote");
-        var monthy   = $("#my").text();
-        var cur_cnt  = parseInt(cnt_ctr.text());
-
-        $.ajax({
-            url: "/saveVote",
-            type: "post",
-            data: {
-                voting: vote_for,
-                my: monthy
-            },
-            success:function(d)
-            {
-                cur_cnt++;
-
-                disableVoting("do-vote");
-                button.addClass("done");
-                button.off("click");
-                cnt_ctr.text(cur_cnt);
-            }
-        });
-        return false;
-    });
-};
-
-$(document).ready(function()
-{
-    enableVoting("do-vote");
-    disableVoting("has-voted");
+$('.actions .dislike').click(function(e){
+    e.preventDefault();
+    $("#picpollSlider-<%= uniqueId %>").jTinder("dislike");
 });
 </script>
 
