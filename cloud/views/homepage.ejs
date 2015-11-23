@@ -16,7 +16,7 @@
             var pic = pictures[i];
             %>
             <li class="swiperPane pane1" data-vote="<%= pic.id %>">
-                <div><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
+                <div class="img"><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
                 <div><%= pic.get("title") %></div>
                 <div class="smallText"><%= pic.get("description") %></div>
                 <div class="smallText">
@@ -43,7 +43,12 @@ $("#picpollSlider-<%= uniqueId %>").jTinder({
     animationSpeed: 400,
     threshold: 1,
     likeSelector: '.like',
-    dislikeSelector: '.dislike'
+    dislikeSelector: '.dislike',
+    onFinish: function() {
+        console.log("finished");
+    },
+    onBeforeNext: function(index) { console.log ("before: " + index); },
+    onAfterNext: function(index) { console.log ("after: " + index); }
 });
 
 $('.actions .like').click(function(e){

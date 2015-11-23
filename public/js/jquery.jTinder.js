@@ -66,8 +66,16 @@
 			 **/
 			//@see #f3565b
 			//return this.showPane(current_pane - 1);
+
+			$that.settings.onBeforeNext
+				&& $that.settings.onBeforeNext(current_pane);
+
 			!current_pane && $that.settings.onFinish && $that.settings.onFinish();
-			return this.showPane(current_pane - 1);
+			var showResult = this.showPane(current_pane - 1);
+
+			$that.settings.onAfterNext
+				&& $that.settings.onAfterNext(current_pane);
+			return showResult;
 		},
 
 		dislike: function() {
