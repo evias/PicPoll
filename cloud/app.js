@@ -114,6 +114,17 @@ app.get('/', function(request, response)
   var error   = request.query.error;
   var success = request.query.success;
 
+  var ipAddress = request.connection.remoteAddress;
+  var userAgent = request.headers['user-agent'];
+
+  var dtObject  = new Date();
+  var dateStr   = dtObject.getTime();
+  var hashStr   = userAgent + "@" + ipAddress + " (" + dateStr + ")";
+
+  // create SHA-1 hash for unique PicPoll Swiper
+  var uniqueId  = crypto.createHash("sha1")
+                        .update(hashStr).digest("hex");
+
   // load Picture entries
   Parse.Cloud.run("listPictures", {}, {
     success: function (cloudResponse)
@@ -121,6 +132,7 @@ app.get('/', function(request, response)
       response.render('homepage', {
         "month": cloudResponse.month,
         "pictures": cloudResponse.pictures,
+        "uniqueId": uniqueId,
         "errorMessage": error ? unescape(error) : false,
         "successMessage": success ? unescape(success) : false
       });
