@@ -16,13 +16,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
  *
  * @package PicPoll
- * @subpackage Parse CloudCode Functions
+ * @subpackage Frontend
  * @author Grégory Saive <greg@evias.be>
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link https://picpoll.parseapp.com
 **/
 
-models = require("cloud/models.js");
+models  = require("cloud/models.js");
+core    = require("cloud/core.js");
+crypto  = require('crypto');
 express = require('express');
 app = express();
 
@@ -83,8 +85,15 @@ app.use(function(req, res, next)
   if (! currentUser)
     currentUser = false;
 
+  var ipAddress = req.connection.remoteAddress;
+  var userAgent = req.headers['user-agent'];
+  var userHash  = crypto.createHash("sha1")
+                        .update(userAgent + "@" + ipAddress)
+                        .digest("hex");
+
   res.locals.currentUser  = currentUser;
-  res.locals.currentMonth = models.Month.getCurrentMonth();
+  res.locals.currentMonth = core.Month.getCurrentMonth();
+  res.locals.userHash     = userHash;
   next();
 });
 
@@ -287,7 +296,31 @@ app.post('/signup', function(request, response)
  **/
 app.post("/saveVote", function(request, response)
 {
-  response.send("OK");
+  var pictureId = request.body.voting;
+  var ipAddress = request.connection.remoteAddress;
+  var userAgent = request.headers['user-agent'];
+
+  var dtObject  = new Date();
+  var dateStr   = dtObject.getDate()
+                + dtObject.getMonth()
+                + dtObject.getFullYear();
+  var hashStr   = userAgent + "@" + ipAddress + " (" + dateStr + ")";
+
+  // create SHA-1 hash for voting user
+  var userHash  = crypto.createHash("sha1")
+                        .update(hashStr).digest("hex");
+
+  Parse.Cloud.run("saveVote", {
+    "pictureId": pictureId,
+    "userHash": userHash
+  }, {
+    success: function (cloudResponse) {
+      response.send({"result": true});
+    },
+    error: function (cloudResponse) {
+      response.send({"result": false, "error": cloudResponse.message});
+    }
+  });
 });
 
 // Attach the Express app to Cloud Code.

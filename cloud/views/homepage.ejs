@@ -11,7 +11,8 @@
                 <header>
                     <h2><%= pic.get("title") %></h2>
                 </header>
-                <a href="/saveVote" class="button icon fa-file do-vote" data-vote="<%= pic.id %>">Vote</a><br />
+                <a href="/saveVote" class="button icon fa-file do-vote" data-vote="<%= pic.id %>">
+                    <span>Vote</span>&nbsp;<span>(<%= pic.get("countVotes") %>)</span></a><br />
                 <span class="image featured monthly">
                     <img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>"
                          alt="<%= pic.get("title") %>" /></span>

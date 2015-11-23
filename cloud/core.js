@@ -16,35 +16,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
  *
  * @package PicPoll
- * @subpackage Models
+ * @subpackage Core
  * @author Grégory Saive <greg@evias.be>
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link https://picpoll.parseapp.com
 **/
 
-/**
- * Model class Picture
- **/
-var Picture = Parse.Object.extend("Picture",
+var Month = Parse.Object.extend("Month",
   {},
-  {}
+  {
+    getCurrentMonth: function()
+    {
+      var dt = new Date();
+      var mon  = dt.getMonth() + 1; mon = mon < 10 ? "0" + "" + mon : mon;
+      var year = dt.getFullYear();
+
+      return "" + mon + "" + year;
+    }
+  }
 );
-/* end Model Picture */
 
-/**
- * Model class Vote
- **/
-var Vote = Parse.Object.extend("Vote",
-  {},
-  {}
-);
-/* end Model Vote */
+Parse.Object.registerSubclass("Month", Month);
 
-// Make sure our Models are loaded in queries.
-Parse.Object.registerSubclass("Picture", Picture);
-Parse.Object.registerSubclass("Vote", Vote);
-
-exports.Picture = Picture;
-exports.Vote    = Vote ;
-
+exports.Month = Month;
 module.exports = exports;

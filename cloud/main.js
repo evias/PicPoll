@@ -16,12 +16,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
  *
  * @package PicPoll
- * @subpackage Parse CloudCode Functions
+ * @subpackage CloudCode
  * @author Grégory Saive <greg@evias.be>
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link https://picpoll.parseapp.com
 **/
 models = require('cloud/models.js');
+core   = require('cloud/core.js');
 
 require('cloud/app.js');
 
@@ -47,7 +48,7 @@ Parse.Cloud.define("ping", function(request, response)
 Parse.Cloud.define("listPictures", function(request, response)
 {
   var pictures = new Parse.Query(models.Picture)
-  pictures.equalTo("month", models.Month.getCurrentMonth());
+  pictures.equalTo("month", core.Month.getCurrentMonth());
   pictures.descending("createdAt");
   pictures.find({
     success: function(pictures)
@@ -57,9 +58,47 @@ Parse.Cloud.define("listPictures", function(request, response)
 
       response.success({
         "result": true,
-        "month": models.Month.getCurrentMonth(),
+        "month": core.Month.getCurrentMonth(),
         "pictures": pictures
       });
     }
+  });
+});
+
+/**
+ * The saveVote Parse CloudCode Functions responses
+ * with a JSON response containing a 'result' boolean
+ * and a 'vote' object in case of a valid save action.
+ **/
+Parse.Cloud.define("saveVote", function(request, response)
+{
+  var pictureId  = request.params.pictureId;
+  var userHash   = request.params.userHash;
+
+  // load Picture pointer, then insert
+  // a new Vote entry.
+  var thePicture = new Parse.Query(models.Picture);
+  thePicture.get(pictureId, {
+  success: function(thePicture) {
+
+    // save new vote for picture
+    var cntVotes = thePicture.get("countVotes") + 1;
+    thePicture.set("countVotes", cntVotes);
+    thePicture.save(null, {
+    success: function(thePicture) {
+      var theVote = new models.Vote();
+      theVote.set("picture", thePicture);
+      theVote.set("userHash", userHash);
+      theVote.save(null, {
+      success: function(theVote) {
+        response.success({
+          "result": true,
+          "vote": theVote});
+      },
+      error: function(error) { response.error(error.message); }
+      });
+    }});
+  },
+  error: function(error) { response.error(error.message); }
   });
 });
