@@ -12,11 +12,14 @@
 <div class="wrap">
     <div id="picpollSlider-<%= uniqueId %>" class="picpollSlider">
         <ul>
-        <% for (var i = 0; i < pictures.length; i++) {
+        <% for (var i = 0, idx = pictures.length-1; i < pictures.length; i++, idx--) {
             var pic = pictures[i];
             %>
-            <li class="swiperPane pane1" data-vote="<%= pic.id %>">
-                <div><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
+            <li class="swiperPane pane1"
+                data-index="<%= idx %>"
+                data-vote="<%= pic.id %>"
+                data-month="<%= pic.get("month") %>">
+                <div class="img"><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
                 <div><%= pic.get("title") %></div>
                 <div class="smallText"><%= pic.get("description") %></div>
                 <div class="smallText">
@@ -43,7 +46,23 @@ $("#picpollSlider-<%= uniqueId %>").jTinder({
     animationSpeed: 400,
     threshold: 1,
     likeSelector: '.like',
-    dislikeSelector: '.dislike'
+    dislikeSelector: '.dislike',
+    onFinish: function() {},
+    onBeforeNext: function(index, action) {
+        var panel = $(".swiperPane[data-index='" + index + "']");
+        var picId = panel.attr("data-vote");
+        var month = panel.attr("data-month");
+
+        if (action == "dislike")
+            return false;
+
+        // saveVote when pic is liked
+        $.ajax({
+            url: "/saveVote",
+            type:"POST",
+            data: {voting: picId, my: month}});
+    },
+    onAfterNext: function(index, action) {}
 });
 
 $('.actions .like').click(function(e){
