@@ -1,7 +1,10 @@
 ## evias/PicPoll
 PicPoll is a Parse CloudCode App providing with CloudCode Functions
-and a nodeJS (+ express) web application. This package provides Pic
-of the Month features such as Voting and Votes Statistics.
+and a nodeJS (+ express) web application. This package can be integrated
+easily to any other Parse CloudCode App. The main purpose of this application
+is to provide with a easy-to-install Picture Voting Module. A Back-end for
+uploading new pictures and managing all other sorts of data is also under
+development.
 
 A Demo of this App deployed to a Parse Hosting can be found at following
 URL : https://picpoll.parseapp.com

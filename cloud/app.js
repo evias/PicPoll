@@ -76,8 +76,9 @@ app.use(function(req, res, next)
 /**
  * Fill default local request variables.
  * This method fills the variables :
- * - currentUser   : Parse.User instance of boolean false
+ * - currentUser   : Parse.User instance or boolean false
  * - currentMonth  : date String in format "mmYYYY"
+ * - userHash      : user hash String (SHA-1)
  **/
 app.use(function(req, res, next)
 {
@@ -94,7 +95,32 @@ app.use(function(req, res, next)
   res.locals.currentUser  = currentUser;
   res.locals.currentMonth = core.Month.getCurrentMonth();
   res.locals.userHash     = userHash;
-  next();
+
+  // load Parse App Parse.Config and store into
+  // template locals.
+  Parse.Config.get().then(
+    function(config)
+    {
+      res.locals.PicPollConfig  = config;
+      res.locals.PicPollAppId   = config.get("PicPollAppId");
+      res.locals.PicPollRestKey = config.get("PicPollRestKey");
+    });
+
+  // run CloudCode "listMonths" to have a list
+  // of distinct months. (needed in archives links)
+  Parse.Cloud.run("listMonths", {}, {
+    success: function (cloudResponse)
+    {
+      res.locals.months = cloudResponse.months;
+      next();
+    },
+    error: function (cloudResponse) {
+      // could not get months list from Cloud, fill with
+      // current month only.
+      res.locals.months = [core.Month.getCurrentMonth()];
+      next();
+    }
+  });
 });
 
 /*******************************************************************************
@@ -210,8 +236,10 @@ app.get('/terms-and-conditions', function(request, response)
  **/
 app.get('/getStatistics', function(request, response)
 {
+  var month = request.query.m;
+
   // load Picture entries
-  Parse.Cloud.run("getStatistics", {}, {
+  Parse.Cloud.run("getStatistics", {"month": month}, {
     success: function (cloudResponse)
     {
       response.status(200)
@@ -226,6 +254,67 @@ app.get('/getStatistics', function(request, response)
               .send("Error: " + cloudResponse.message);
     }
   });
+});
+
+/**
+ * GET /archives
+ * describes the archives GET request.
+ * this handler will render the archives
+ * template for the given month.
+ **/
+app.get('/archives', function(request, response)
+{
+  var month = request.query.m;
+
+  var ipAddress = request.connection.remoteAddress;
+  var userAgent = request.headers['user-agent'];
+  var dtObject  = new Date();
+  var dateStr   = dtObject.getTime();
+  var hashStr   = userAgent + "@" + ipAddress + " (" + dateStr + ")";
+
+  // create SHA-1 hash for unique PicPoll Swiper
+  var uniqueId  = crypto.createHash("sha1")
+                        .update(hashStr).digest("hex");
+
+  // load Picture entries
+  Parse.Cloud.run("listPictures", {"month": month}, {
+    success: function (cloudResponse)
+    {
+      response.render('archives', {
+        "month": cloudResponse.month,
+        "pictures": cloudResponse.pictures,
+        "uniqueId": uniqueId
+      });
+    },
+    error: function (cloudResponse)
+    {
+      response.send("Error: " + cloudResponse.message);
+    }
+  });
+});
+
+/**
+ * GET /upload
+ * describes the upload GET request.
+ * this handler will render the upload view.
+ **/
+app.get('/upload', function(request, response)
+{
+  var error = request.query.error;
+
+  var currentUser = Parse.User.current();
+  if (! currentUser)
+    response.redirect("/?error=" + escape("You are not allowed to visit this Page."));
+  else {
+    var formValues = {
+      "title": "",
+      "description": "",
+      "picUrl": ""
+    };
+    response.render('upload', {
+      "formValues": formValues,
+      "errorMessage": false});
+  }
 });
 
 /*******************************************************************************
@@ -358,6 +447,67 @@ app.post("/saveVote", function(request, response)
       response.send({"result": false, "error": cloudResponse.message});
     }
   });
+});
+
+/**
+ * POST /upload
+ * describes the upload POST request.
+ * this handler is where we register new
+ * Picture entries.
+ **/
+app.post('/upload', function(request, response)
+{
+  var currentUser = Parse.User.current();
+  if (! currentUser)
+    response.redirect("/?error=" + escape("You are not allowed to visit this Page."));
+  else {
+    var title       = request.body.title;
+    var description = request.body.description;
+    var picUrl      = request.body.picUrl;
+
+    var formValues = {
+      "title": title,
+      "description": description,
+      "picUrl": picUrl
+    };
+
+    errors = [];
+    if (!title || !title.length)
+      errors.push("The Picture title may not be empty.");
+
+    if (!description || !description.length)
+      errors.push("The Description may not be empty.");
+
+    if (!picUrl || !picUrl.length)
+      errors.push("Please upload a Picture !");
+
+    if (errors.length)
+    // render with error messages displayed
+      response.render("upload", {
+        "formValues": formValues,
+        "errorMessage": errors.join(" ", errors)});
+    else {
+    // save Picture entry !
+      var picture = new models.Picture();
+      picture.set("title", title);
+      picture.set("description", description);
+      picture.set("picUrl", picUrl);
+      picture.set("month", core.Month.getCurrentMonth());
+      picture.set("user", currentUser);
+      picture.set("countVotes", 0);
+      picture.save(null, {
+        success: function(picture) {
+          // done with this upload
+          response.redirect("/?success=" + escape("Picture added successfully!"));
+        },
+        error: function(picture, error) {
+          response.render('upload', {
+          "formValues": formValues,
+          "errorMessage": error.message});
+        }
+      });
+    }
+  }
 });
 
 // Attach the Express app to Cloud Code.

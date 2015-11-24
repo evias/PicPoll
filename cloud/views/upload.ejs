@@ -1,0 +1,99 @@
+
+<%- include header -%>
+
+    <article class="box post">
+        <section>
+            <div class="title align-center">
+                <h2>Upload Picture</h2>
+                <p>Select a picture to Upload for this Month's Voting!</p>
+            </div>
+            <div class="wide">
+                <div class="form-box">
+                    <% if (errorMessage) { %>
+                    <div id="error">
+                        <div>
+                            <p>Error: <%= errorMessage %></p>
+                        </div>
+                    </div>
+                    <% } %>
+                    <form id="picUpload" name="picUpload" method="post"
+                          novalidate="novalidate">
+                        <div class="input-group margin-bottom-sm">
+                          <span class="input-group-addon"><i class="fa fa-underline fa-fw"></i></span>
+                          <input name="title" class="form-control"
+                                 type="text" placeholder="Picture title"
+                                 value="<%= formValues.title %>">
+                        </div>
+                        <div class="input-group">
+                          <span class="input-group-addon"><i class="fa fa-list-alt fa-fw"></i></span>
+                          <textarea name="description"
+                                    class="form-control"
+                                    placeholder="Description"><%= formValues.description %></textarea>
+                        </div>
+
+                        <div class="input-group">
+                          <span class="input-group-addon"><i class="fa fa-cloud-upload fa-fw"></i></span>
+                          <input type="file" name="picSelect" id="picSelect" />
+                          &nbsp;<span id="doneUpload"><i class="fa fa-check"></i></span>
+                          &nbsp;<span id="uploadError"><i class="fa fa-warning"></i></span>
+                          <input type="hidden" name="picUrl" id="picURL" value="<%= formValues.picUrl %>" />
+                        </div>
+
+                        <div id="uploadPreview" class="input-group" style="display: none;">
+                          <span class="input-group-addon"><i class="fa fa-eye fa-fw"></i></span>
+                          <img src="/images/default_picture.png" class="upload-preview" />
+                        </div>
+
+                        <div class="row 50%">
+                            <div class="12u">
+                                <br />
+                                <a href="#" class="form-button-submit button"><i class="fa fa-save"></i>&nbsp;Save Picture</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </article>
+
+<script type="text/javascript">
+$(function() {
+  var file;
+
+  $('#picSelect').bind("change", function(e)
+  {
+    var files = e.target.files || e.dataTransfer.files;
+    file = files[0];
+
+    var serverUrl = 'https://api.parse.com/1/files/' + file.name;
+    $.ajax({
+      type: "POST",
+      beforeSend: function(request) {
+        request.setRequestHeader("X-Parse-Application-Id", '<%= PicPollAppId %>');
+        request.setRequestHeader("X-Parse-REST-API-Key", '<%= PicPollRestKey %>');
+        request.setRequestHeader("Content-Type", file.type);
+      },
+      url: serverUrl,
+      data: file,
+      processData: false,
+      contentType: false,
+      success: function(data) {
+        // remove "http" to stay on https if needed.
+        var url = data.url.replace(/^(http:)(.*)/, "$2");
+
+        $(".upload-preview").attr("src", url);
+
+        $("#doneUpload").fadeIn("slow");
+        $("#uploadPreview").fadeIn("slow");
+        $("#picURL").val(url);
+      },
+      error: function(data) {
+        var obj = jQuery.parseJSON(data);
+        $("#uploadError").fadeIn("slow");
+        alert(obj.error);
+      }
+    });
+  });
+});
+</script>
+<%- include footer -%>

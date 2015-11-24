@@ -27,26 +27,42 @@
     <body class="right-sidebar">
         <div id="header-wrapper">
             <div id="header" class="container">
-                <h1 id="logo" class="noUpper"><a href="/">&bdquo;Pic<b>Poll</b>&rdquo;</a></h1>
+                <h1 id="logo" class="noUpper"><a href="/"><img src="/images/picpoll.png" alt="PicPoll" /></h1>
                 <p>Get your own &bdquo;Hot or Not&rdquo; Polls App !</p>
                 <nav id="nav">
                     <ul>
                     <% if (currentUser) { %>
-                        <li><a class="icon fa-home" href="/"><span>Account: <b><%= currentUser.get("username") %></b></span></a></li>
-                        <li>
-                            <a href="" class="icon fa-bar-chart-o"><span>Archives</span></a>
-                            <ul>
-                                <li><a href="#">Novembre 2015</a></li>
-                            </ul>
-                        </li>
+                        <li><a class="icon fa-home" href="/">
+                            <span>Account: <b><%= currentUser.get("username") %></b></span>
+                        </a></li>
+                        <li><a class="icon fa-home" href="/upload">
+                            <span>Upload Picture</b></span>
+                        </a></li>
                     <% } else { %>
                         <li><a class="icon fa-home" href="/"><span>Welcome</span></a></li>
+                        <li><a class="icon fa-sign-in" href="/signin">
+                            <span>Sign-In</span>
+                        </a></li>
+                    <% } %>
                         <li>
-                            <a href="" class="icon fa-bar-chart-o"><span>Archives</span></a>
+                            <a href="#" class="icon fa-bar-chart-o"><span>Archives</span></a>
                             <ul>
-                                <li><a href="#">Novembre 2015</a></li>
+                            <% for (var m = 0; m < months.length; m++) {
+                                var href = "/archives?m=" + months[m].id;
+                                if (currentMonth == months[m].id)
+                                    href = "/";
+                                %>
+
+                                <li><a href="<%= href %>"><%= months[m].label %></a></li>
+
+                            <% } %>
                             </ul>
                         </li>
+
+                    <% if (currentUser) { %>
+                        <li><a class="icon fa-sign-out" href="/signout">
+                            <span>Logout</span>
+                        </a></li>
                     <% } %>
                     </ul>
                 </nav>

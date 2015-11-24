@@ -21,29 +21,21 @@
         <ul>
         <% for (var i = 0; i < pictures.length; i++) {
             var pic = pictures[i];
-            var src = pic.get("picUrl");
             %>
             <li class="swiperPane pane1"
                 data-index="<%= i %>"
                 data-vote="<%= pic.id %>"
                 data-month="<%= pic.get("month") %>">
-                <div class="img"><img src="<%= src %>" /></div>
+                <div class="img"><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
                 <div><%= pic.get("title") %></div>
                 <div class="smallText"><%= pic.get("description") %></div>
                 <div class="smallText">
                     <span><%= pic.get("countVotes") %></span><span> Vote(s)</span>
                 </div>
-                <div class="like"></div>
-                <div class="dislike"></div>
             </li>
         <% } %>
         </ul>
     </div>
-</div>
-
-<div class="actions">
-    <a href="#" class="like"><i></i></a>
-    <a href="#" class="dislike"><i></i></a>
 </div>
 
 <div id="statistics-container">Statistics will render here !</div>
@@ -61,31 +53,7 @@ var initializeSwiper = function()
         dislikeSelector: '.dislike',
         onFinish: function() {
             $(".wrap.slider, .actions").fadeOut("slow");
-        },
-        onBeforeNext: function(index, action) {
-            var panel = $(".swiperPane[data-index='" + index + "']");
-            var picId = panel.attr("data-vote");
-            var month = panel.attr("data-month");
-
-            if (action == "dislike")
-                return false;
-
-            // saveVote when pic is liked
-            $.ajax({
-                url: "/saveVote",
-                type:"POST",
-                data: {voting: picId, my: month}});
         }
-    });
-
-    $('.actions .like').click(function(e){
-        e.preventDefault();
-        $("#picpollSlider-<%= uniqueId %>").jTinder("like");
-    });
-
-    $('.actions .dislike').click(function(e){
-        e.preventDefault();
-        $("#picpollSlider-<%= uniqueId %>").jTinder("dislike");
     });
 };
 
@@ -104,7 +72,7 @@ var initializeChart = function()
             depth: 50, viewDistance: 25}};
 
     $.ajax({
-        url: "/getStatistics?m=" + "<%= currentMonth %>",
+        url: "/getStatistics?m=" + "<%= month %>",
         type: "GET",
         success: function(d) {
             var object = d;
