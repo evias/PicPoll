@@ -96,6 +96,16 @@ app.use(function(req, res, next)
   res.locals.currentMonth = core.Month.getCurrentMonth();
   res.locals.userHash     = userHash;
 
+  // load Parse App Parse.Config and store into
+  // template locals.
+  Parse.Config.get().then(
+    function(config)
+    {
+      res.locals.PicPollConfig  = config;
+      res.locals.PicPollAppId   = config.get("PicPollAppId");
+      res.locals.PicPollRestKey = config.get("PicPollRestKey");
+    });
+
   // run CloudCode "listMonths" to have a list
   // of distinct months. (needed in archives links)
   Parse.Cloud.run("listMonths", {}, {
