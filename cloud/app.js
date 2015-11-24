@@ -293,6 +293,30 @@ app.get('/archives', function(request, response)
   });
 });
 
+/**
+ * GET /upload
+ * describes the upload GET request.
+ * this handler will render the upload view.
+ **/
+app.get('/upload', function(request, response)
+{
+  var error = request.query.error;
+
+  var currentUser = Parse.User.current();
+  if (! currentUser)
+    response.redirect("/?error=" + escape("You are not allowed to visit this Page."));
+  else {
+    var formValues = {
+      "title": "",
+      "description": "",
+      "picUrl": ""
+    };
+    response.render('upload', {
+      "formValues": formValues,
+      "errorMessage": false});
+  }
+});
+
 /*******************************************************************************
  * HTTP POST requests handlers for PicPoll
  * @link https://picpoll.parseapp.com
@@ -423,6 +447,67 @@ app.post("/saveVote", function(request, response)
       response.send({"result": false, "error": cloudResponse.message});
     }
   });
+});
+
+/**
+ * POST /upload
+ * describes the upload POST request.
+ * this handler is where we register new
+ * Picture entries.
+ **/
+app.post('/upload', function(request, response)
+{
+  var currentUser = Parse.User.current();
+  if (! currentUser)
+    response.redirect("/?error=" + escape("You are not allowed to visit this Page."));
+  else {
+    var title       = request.body.title;
+    var description = request.body.description;
+    var picUrl      = request.body.picUrl;
+
+    var formValues = {
+      "title": title,
+      "description": description,
+      "picUrl": picUrl
+    };
+
+    errors = [];
+    if (!title || !title.length)
+      errors.push("The Picture title may not be empty.");
+
+    if (!description || !description.length)
+      errors.push("The Description may not be empty.");
+
+    if (!picUrl || !picUrl.length)
+      errors.push("Please upload a Picture !");
+
+    if (errors.length)
+    // render with error messages displayed
+      response.render("upload", {
+        "formValues": formValues,
+        "errorMessage": errors.join(" ", errors)});
+    else {
+    // save Picture entry !
+      var picture = new models.Picture();
+      picture.set("title", title);
+      picture.set("description", description);
+      picture.set("picUrl", picUrl);
+      picture.set("month", core.Month.getCurrentMonth());
+      picture.set("user", currentUser);
+      picture.set("countVotes", 0);
+      picture.save(null, {
+        success: function(picture) {
+          // done with this upload
+          response.redirect("/?success=" + escape("Picture added successfully!"));
+        },
+        error: function(picture, error) {
+          response.render('upload', {
+          "formValues": formValues,
+          "errorMessage": error.message});
+        }
+      });
+    }
+  }
 });
 
 // Attach the Express app to Cloud Code.
