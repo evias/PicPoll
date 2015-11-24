@@ -76,8 +76,9 @@ app.use(function(req, res, next)
 /**
  * Fill default local request variables.
  * This method fills the variables :
- * - currentUser   : Parse.User instance of boolean false
+ * - currentUser   : Parse.User instance or boolean false
  * - currentMonth  : date String in format "mmYYYY"
+ * - userHash      : user hash String (SHA-1)
  **/
 app.use(function(req, res, next)
 {
@@ -94,7 +95,22 @@ app.use(function(req, res, next)
   res.locals.currentUser  = currentUser;
   res.locals.currentMonth = core.Month.getCurrentMonth();
   res.locals.userHash     = userHash;
-  next();
+
+  // run CloudCode "listMonths" to have a list
+  // of distinct months. (needed in archives links)
+  Parse.Cloud.run("listMonths", {}, {
+    success: function (cloudResponse)
+    {
+      res.locals.months = cloudResponse.months;
+      next();
+    },
+    error: function (cloudResponse) {
+      // could not get months list from Cloud, fill with
+      // current month only.
+      res.locals.months = [core.Month.getCurrentMonth()];
+      next();
+    }
+  });
 });
 
 /*******************************************************************************

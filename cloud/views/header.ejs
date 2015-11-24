@@ -32,22 +32,26 @@
                 <nav id="nav">
                     <ul>
                     <% if (currentUser) { %>
-                        <li><a class="icon fa-home" href="/"><span>Account: <b><%= currentUser.get("username") %></b></span></a></li>
-                        <li>
-                            <a href="" class="icon fa-bar-chart-o"><span>Archives</span></a>
-                            <ul>
-                                <li><a href="#">Novembre 2015</a></li>
-                            </ul>
-                        </li>
+                        <li><a class="icon fa-home" href="/">
+                            <span>Account: <b><%= currentUser.get("username") %></b></span>
+                        </a></li>
                     <% } else { %>
                         <li><a class="icon fa-home" href="/"><span>Welcome</span></a></li>
+                    <% } %>
                         <li>
-                            <a href="" class="icon fa-bar-chart-o"><span>Archives</span></a>
+                            <a href="#" class="icon fa-bar-chart-o"><span>Archives</span></a>
                             <ul>
-                                <li><a href="#">Novembre 2015</a></li>
+                            <% for (var m = 0; m < months.length; m++) {
+                                var href = "/archives?m=" + months[m].id;
+                                if (currentMonth == months[m].id)
+                                    href = "/";
+                                %>
+
+                                <li><a href="<%= href %>"><%= months[m].label %></a></li>
+
+                            <% } %>
                             </ul>
                         </li>
-                    <% } %>
                     </ul>
                 </nav>
             </div>

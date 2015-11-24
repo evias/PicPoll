@@ -144,3 +144,42 @@ Parse.Cloud.define("getStatistics", function(request, response)
     }
   });
 });
+
+/**
+ * The listMonths Parse CloudCode Functions responses
+ * with a JSON response containing a 'months' array of
+ * months represented as String in format "mmYYYY".
+ **/
+Parse.Cloud.define("listMonths", function(request, response)
+{
+  var pictures = new Parse.Query(models.Picture)
+  pictures.select("month");
+  pictures.descending("createdAt");
+  pictures.find({
+    success: function(pictures)
+    {
+      if (! pictures)
+        pictures = [];
+
+      var object = {};
+      var months = [];
+      for (var i = 0; i < pictures.length; i++) {
+        var month_id   = pictures[i].get("month");
+        if (object[month_id])
+          continue;
+
+        var this_month = {
+          "id": month_id,
+          "label": core.Month.getLabel(month_id)
+        };
+        months.push(this_month);
+        object[month_id] = true;
+      }
+
+      response.success({
+        "result": true,
+        "months": months
+      });
+    }
+  });
+});
