@@ -47,8 +47,11 @@ Parse.Cloud.define("ping", function(request, response)
  **/
 Parse.Cloud.define("listPictures", function(request, response)
 {
+  var month = "undefined" == typeof request.params.month ?
+            core.Month.getCurrentMonth() : request.params.month;
+
   var pictures = new Parse.Query(models.Picture)
-  pictures.equalTo("month", core.Month.getCurrentMonth());
+  pictures.equalTo("month", month);
   pictures.descending("createdAt");
   pictures.find({
     success: function(pictures)
@@ -58,7 +61,7 @@ Parse.Cloud.define("listPictures", function(request, response)
 
       response.success({
         "result": true,
-        "month": core.Month.getCurrentMonth(),
+        "month": month,
         "pictures": pictures
       });
     }
@@ -111,9 +114,12 @@ Parse.Cloud.define("saveVote", function(request, response)
  **/
 Parse.Cloud.define("getStatistics", function(request, response)
 {
+  var month = "undefined" == typeof request.params.month ?
+            core.Month.getCurrentMonth() : request.params.month;
+
   // get pictures and filter by current month
   var pictures = new Parse.Query(models.Picture)
-  pictures.equalTo("month", core.Month.getCurrentMonth());
+  pictures.equalTo("month", month);
   pictures.descending("createdAt");
   pictures.find({
     success: function(pictures)

@@ -226,8 +226,10 @@ app.get('/terms-and-conditions', function(request, response)
  **/
 app.get('/getStatistics', function(request, response)
 {
+  var month = request.query.m;
+
   // load Picture entries
-  Parse.Cloud.run("getStatistics", {}, {
+  Parse.Cloud.run("getStatistics", {"month": month}, {
     success: function (cloudResponse)
     {
       response.status(200)
@@ -240,6 +242,43 @@ app.get('/getStatistics', function(request, response)
     {
       response.status(200)
               .send("Error: " + cloudResponse.message);
+    }
+  });
+});
+
+/**
+ * GET /archives
+ * describes the archives GET request.
+ * this handler will render the archives
+ * template for the given month.
+ **/
+app.get('/archives', function(request, response)
+{
+  var month = request.query.m;
+
+  var ipAddress = request.connection.remoteAddress;
+  var userAgent = request.headers['user-agent'];
+  var dtObject  = new Date();
+  var dateStr   = dtObject.getTime();
+  var hashStr   = userAgent + "@" + ipAddress + " (" + dateStr + ")";
+
+  // create SHA-1 hash for unique PicPoll Swiper
+  var uniqueId  = crypto.createHash("sha1")
+                        .update(hashStr).digest("hex");
+
+  // load Picture entries
+  Parse.Cloud.run("listPictures", {"month": month}, {
+    success: function (cloudResponse)
+    {
+      response.render('archives', {
+        "month": cloudResponse.month,
+        "pictures": cloudResponse.pictures,
+        "uniqueId": uniqueId
+      });
+    },
+    error: function (cloudResponse)
+    {
+      response.send("Error: " + cloudResponse.message);
     }
   });
 });
