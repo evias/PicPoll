@@ -21,12 +21,13 @@
         <ul>
         <% for (var i = 0; i < pictures.length; i++) {
             var pic = pictures[i];
+            var src = pic.get("picUrl");
             %>
             <li class="swiperPane pane1"
                 data-index="<%= i %>"
                 data-vote="<%= pic.id %>"
                 data-month="<%= pic.get("month") %>">
-                <div class="img"><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
+                <div class="img"><img src="<%= src %>" /></div>
                 <div><%= pic.get("title") %></div>
                 <div class="smallText"><%= pic.get("description") %></div>
                 <div class="smallText">
