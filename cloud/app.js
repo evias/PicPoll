@@ -203,6 +203,31 @@ app.get('/terms-and-conditions', function(request, response)
   response.render('terms', {});
 });
 
+/**
+ * GET /getStatistics
+ * describes the getStatistics GET request.
+ * this handler will send a JSON response.
+ **/
+app.get('/getStatistics', function(request, response)
+{
+  // load Picture entries
+  Parse.Cloud.run("getStatistics", {}, {
+    success: function (cloudResponse)
+    {
+      response.status(200)
+              .send({
+                "result": true,
+                "series": cloudResponse.series,
+                "categories": cloudResponse.categories});
+    },
+    error: function (cloudResponse)
+    {
+      response.status(200)
+              .send("Error: " + cloudResponse.message);
+    }
+  });
+});
+
 /*******************************************************************************
  * HTTP POST requests handlers for PicPoll
  * @link https://picpoll.parseapp.com

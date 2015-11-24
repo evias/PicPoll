@@ -4,19 +4,26 @@
 <link rel="stylesheet" type="text/css" href="/css/jTinder.css">
 <script type="text/javascript" src="/js/jquery.transform2d.js"></script>
 <script type="text/javascript" src="/js/jquery.jTinder.js"></script>
+<script type="text/javascript" src="/js/jquery.highcharts.min.js"></script>
+<script type="text/javascript" src="/js/jquery.highcharts-3d.min.js"></script>
 
     <% if (! pictures.length) { %>
 
+<div class="wrap">
+    <p>Unfortunately, no Pictures have been added to this PicPoll
+    instance yet!</p>
+</div>
+
     <% } else { %>
 
-<div class="wrap">
+<div class="wrap slider">
     <div id="picpollSlider-<%= uniqueId %>" class="picpollSlider">
         <ul>
-        <% for (var i = 0, idx = pictures.length-1; i < pictures.length; i++, idx--) {
+        <% for (var i = 0; i < pictures.length; i++) {
             var pic = pictures[i];
             %>
             <li class="swiperPane pane1"
-                data-index="<%= idx %>"
+                data-index="<%= i %>"
                 data-vote="<%= pic.id %>"
                 data-month="<%= pic.get("month") %>">
                 <div class="img"><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
@@ -38,41 +45,86 @@
     <a href="#" class="dislike"><i></i></a>
 </div>
 
+<div id="statistics-container">Statistics will render here !</div>
+
     <% } %>
 
 <script type="text/javascript">
-$("#picpollSlider-<%= uniqueId %>").jTinder({
-    animationRevertSpeed: 200,
-    animationSpeed: 400,
-    threshold: 1,
-    likeSelector: '.like',
-    dislikeSelector: '.dislike',
-    onFinish: function() {},
-    onBeforeNext: function(index, action) {
-        var panel = $(".swiperPane[data-index='" + index + "']");
-        var picId = panel.attr("data-vote");
-        var month = panel.attr("data-month");
+var initializeSwiper = function()
+{
+    $("#picpollSlider-<%= uniqueId %>").jTinder({
+        animationRevertSpeed: 200,
+        animationSpeed: 400,
+        threshold: 1,
+        likeSelector: '.like',
+        dislikeSelector: '.dislike',
+        onFinish: function() {
+            $(".wrap.slider, .actions").fadeOut("slow");
+        },
+        onBeforeNext: function(index, action) {
+            console.log(index);
 
-        if (action == "dislike")
-            return false;
+            var panel = $(".swiperPane[data-index='" + index + "']");
+            var picId = panel.attr("data-vote");
+            var month = panel.attr("data-month");
 
-        // saveVote when pic is liked
-        $.ajax({
-            url: "/saveVote",
-            type:"POST",
-            data: {voting: picId, my: month}});
-    },
-    onAfterNext: function(index, action) {}
-});
+            if (action == "dislike")
+                return false;
 
-$('.actions .like').click(function(e){
-    e.preventDefault();
-    $("#picpollSlider-<%= uniqueId %>").jTinder("like");
-});
+            // saveVote when pic is liked
+            $.ajax({
+                url: "/saveVote",
+                type:"POST",
+                data: {voting: picId, my: month}});
+        }
+    });
 
-$('.actions .dislike').click(function(e){
-    e.preventDefault();
-    $("#picpollSlider-<%= uniqueId %>").jTinder("dislike");
+    $('.actions .like').click(function(e){
+        e.preventDefault();
+        $("#picpollSlider-<%= uniqueId %>").jTinder("like");
+    });
+
+    $('.actions .dislike').click(function(e){
+        e.preventDefault();
+        $("#picpollSlider-<%= uniqueId %>").jTinder("dislike");
+    });
+};
+
+/**
+ * Initialize charts with Highcharts jQuery plugin.
+ * @link http://api.highcharts.com/highcharts
+ **/
+var initializeChart = function()
+{
+    var chartParams = {
+        renderTo: 'statistics-container',
+        type: 'column',
+        margin: 75,
+        options3d: {
+            enabled: true, alpha: 15, beta: 15,
+            depth: 50, viewDistance: 25}};
+
+    $.ajax({
+        url: "/getStatistics",
+        type: "GET",
+        success: function(d) {
+            var object = d;
+            var chart  = new Highcharts.Chart({
+                chart: chartParams,
+                title: {text: 'Votes Statistics'},
+                subtitle: {text: 'Current Votes Statistics'},
+                plotOptions: {column: {depth: 25}},
+                series: object.series,
+                xAxis: {categories: object.categories},
+            });
+        }
+    });
+};
+
+$(function ()
+{
+    initializeSwiper();
+    initializeChart();
 });
 </script>
 

@@ -1,7 +1,7 @@
 
 .wrap {
     height: 600px;
-    padding: 5%;
+    padding: 0 5%;
 }
 
 .picpollSlider {
@@ -104,7 +104,7 @@
 
 /* Image container */
 .picpollSlider .img {
-    height: 90%;
+    max-height: 85%;
     width: 100%;
     margin-bottom: 5px;
     position: relative;
@@ -162,7 +162,7 @@
     background-image: -ms-linear-gradient(top, #f7f7f7, #e7e7e7);
     background-image: -o-linear-gradient(top, #f7f7f7, #e7e7e7);
     color: #a7a7a7;
-    margin: 36px;
+    margin: 25px;
     width: 80px;
     height: 80px;
     position: relative;
@@ -199,5 +199,6 @@
 @media (max-width: 480px) {
     .wrap  {
         height: 300px;
+        padding: 0 !important;
     }
 }
