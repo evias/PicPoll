@@ -33,7 +33,7 @@
 	}
 
 	/* Sections/Article */
-	
+
 		section,
 		article
 		{
@@ -58,19 +58,19 @@
 		.image
 		{
 		}
-			
+
 			.image.left
 			{
 				width: 40%;
 			}
-			
+
 			.image.featured
 			{
 				margin: 0 0 2em 0;
 			}
 
 	/* Button */
-		
+
 		input[type="button"],
 		input[type="submit"],
 		input[type="reset"],
@@ -116,11 +116,11 @@
 		.box
 		{
 		}
-		
+
 			.box.excerpt
 			{
 			}
-			
+
 				.box-excerpt .date
 				{
 					display: block;
@@ -156,7 +156,7 @@
 				font-weight: normal;
 				-webkit-font-smoothing:antialiased;
 				-moz-osx-font-smoothing:grayscale;
-				
+
 				content: '\f0c9';
 				display: block;
 				width: 60px;
@@ -200,12 +200,12 @@
 			border-top: solid 1px #3c3c3c;
 			padding: 0 1em 0 1em;
 		}
-		
+
 			#navPanel .link:first-child
 			{
 				border-top: 0;
 			}
-			
+
 			#navPanel .link.depth-0
 			{
 				font-weight: 600;
@@ -232,17 +232,17 @@
 	{
 		padding: 3em 20px 3em 20px;
 	}
-	
+
 	#banner-wrapper
 	{
 		padding: 2em 0 2em 0;
 	}
-	
+
 	#main-wrapper
 	{
 		padding: 3em 20px 3em 20px;
 	}
-	
+
 	#footer-wrapper
 	{
 		padding: 4em 20px 3em 20px;
@@ -254,16 +254,16 @@
 
 	#header
 	{
-		padding: 6em 0 4em 0;
+		padding: 1em 0 1em 0;
 	}
-	
+
 		#header h1
 		{
 			font-size: 2em;
 			letter-spacing: 8px;
 			line-height: 1.25em;
 		}
-		
+
 		#header p
 		{
 			margin: 1.25em 0 0 0;
@@ -282,12 +282,12 @@
 /*********************************************************************************/
 /* Banner                                                                        */
 /*********************************************************************************/
-	
+
 	#banner
 	{
 		padding: 5em 20px 5em 20px;
 		margin: 0 !important;
-	}	
+	}
 
 		#banner p
 		{
@@ -295,16 +295,16 @@
 			line-height: 1.25em;
 			letter-spacing: 3px;
 		}
-		
+
 			#banner p br
 			{
 				display: none;
 			}
-	
+
 /*********************************************************************************/
 /* Content                                                                       */
 /*********************************************************************************/
-	
+
 	#content
 	{
 	}
@@ -315,18 +315,18 @@
 			margin: 4em 0 0 0 !important;
 			padding: 4em 0 0 0 !important;
 		}
-		
+
 		#content > section:first-child,
 		#content > article:first-child
 		{
 			margin: 0 !important;
 			padding: 0 !important;
 		}
-	
+
 /*********************************************************************************/
 /* Sidebar                                                                       */
 /*********************************************************************************/
-	
+
 	#sidebar
 	{
 		border-top: solid 2px #e5e5e5;
@@ -341,7 +341,7 @@
 			margin: 4em 0 0 0 !important;
 			padding: 4em 0 0 0 !important;
 		}
-		
+
 		#sidebar > section:first-child,
 		#sidebar > article:first-child
 		{
@@ -356,12 +356,12 @@
 	#footer
 	{
 	}
-	
+
 		#footer .icons
 		{
 			margin: 0 0 2em 0 !important;
 		}
-		
+
 		#footer .icons:last-child
 		{
 			margin-bottom: 0;
