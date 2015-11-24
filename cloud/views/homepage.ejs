@@ -19,11 +19,11 @@
 <div class="wrap">
     <div id="picpollSlider-<%= uniqueId %>" class="picpollSlider">
         <ul>
-        <% for (var i = 0, idx = pictures.length-1; i < pictures.length; i++, idx--) {
+        <% for (var i = 0; i < pictures.length; i++) {
             var pic = pictures[i];
             %>
             <li class="swiperPane pane1"
-                data-index="<%= idx %>"
+                data-index="<%= i %>"
                 data-vote="<%= pic.id %>"
                 data-month="<%= pic.get("month") %>">
                 <div class="img"><img src="/images/monthly/<%= pic.get("month") %>/<%= pic.get("file") %>" /></div>
@@ -60,6 +60,8 @@ var initializeSwiper = function()
         dislikeSelector: '.dislike',
         onFinish: function() {},
         onBeforeNext: function(index, action) {
+            console.log(index);
+
             var panel = $(".swiperPane[data-index='" + index + "']");
             var picId = panel.attr("data-vote");
             var month = panel.attr("data-month");
@@ -105,11 +107,7 @@ var initializeChart = function()
         type: "GET",
         success: function(d) {
             var object = d;
-
-            console.log(object.series);
-            console.log(object.categories);
-
-            var chart = new Highcharts.Chart({
+            var chart  = new Highcharts.Chart({
                 chart: chartParams,
                 title: {text: 'Votes Statistics'},
                 subtitle: {text: 'Current Votes Statistics'},
