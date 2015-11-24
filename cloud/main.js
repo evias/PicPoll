@@ -102,3 +102,45 @@ Parse.Cloud.define("saveVote", function(request, response)
   error: function(error) { response.error(error.message); }
   });
 });
+
+/**
+ * The getStatistics Parse CloudCode Functions responses
+ * with a JSON response containing a 'series' array of pictures
+ * with their name and count of votes, and 'categories' array
+ * representing the statistics plots (columns - X axis).
+ **/
+Parse.Cloud.define("getStatistics", function(request, response)
+{
+  // get pictures and filter by current month
+  var pictures = new Parse.Query(models.Picture)
+  pictures.equalTo("month", core.Month.getCurrentMonth());
+  pictures.descending("createdAt");
+  pictures.find({
+    success: function(pictures)
+    {
+      if (! pictures)
+        pictures = [];
+
+      // count votes and return series according to
+      // Highcharts input data.
+      // @link http://api.highcharts.com/highcharts
+      var series     = [];
+      var categories = [];
+      for (var i = 0; i < pictures.length; i++) {
+        pic = pictures[i];
+
+        categories.push(pic.get("title"));
+        series.push({
+          "name": pic.get("title"),
+          "data": [pic.get("countVotes")]});
+      }
+
+      response.success({
+        "result": true,
+        "month": core.Month.getCurrentMonth(),
+        "series": series,
+        "categories": categories
+      });
+    }
+  });
+});
