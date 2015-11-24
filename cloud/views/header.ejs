@@ -52,6 +52,12 @@
                             <% } %>
                             </ul>
                         </li>
+
+                    <% if (currentUser) { %>
+                        <li><a class="icon fa-sign-out" href="/signout">
+                            <span>Logout</span>
+                        </a></li>
+                    <% } %>
                     </ul>
                 </nav>
             </div>
