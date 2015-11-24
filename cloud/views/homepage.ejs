@@ -16,7 +16,7 @@
 
     <% } else { %>
 
-<div class="wrap">
+<div class="wrap slider">
     <div id="picpollSlider-<%= uniqueId %>" class="picpollSlider">
         <ul>
         <% for (var i = 0; i < pictures.length; i++) {
@@ -58,7 +58,9 @@ var initializeSwiper = function()
         threshold: 1,
         likeSelector: '.like',
         dislikeSelector: '.dislike',
-        onFinish: function() {},
+        onFinish: function() {
+            $(".wrap.slider, .actions").fadeOut("slow");
+        },
         onBeforeNext: function(index, action) {
             console.log(index);
 
