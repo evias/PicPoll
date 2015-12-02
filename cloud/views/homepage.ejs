@@ -11,7 +11,7 @@
 
 <div class="wrap">
     <p>Unfortunately, no Pictures have been added to this PicPoll
-    instance yet!</p>
+    instance for this month yet!</p>
 </div>
 
     <% } else { %>
@@ -59,11 +59,16 @@ var initializeSwiper = function()
         threshold: 1,
         likeSelector: '.like',
         dislikeSelector: '.dislike',
-        onFinish: function() {
-            $(".wrap.slider, .actions").fadeOut("slow");
+        onFinish: function(instance) {
+            instance.rewind();
+            $(".actions").fadeOut("slow");
+            $(".swiperPane").addClass("readonlySwipe");
         },
         onBeforeNext: function(index, action) {
             var panel = $(".swiperPane[data-index='" + index + "']");
+            if (panel.hasClass("readonlySwipe"))
+                return false;
+
             var picId = panel.attr("data-vote");
             var month = panel.attr("data-month");
 
