@@ -85,7 +85,6 @@ var initializeSwiper = function()
                 type:"POST",
                 data: {voting: picId, my: month},
                 success: function(data) {
-                    console.log(data);
                     if (! data.result)
                         return false;
                     else {
@@ -113,27 +112,54 @@ var initializeSwiper = function()
  **/
 var initializeChart = function()
 {
-    var chartParams = {
-        renderTo: 'statistics-container',
-        type: 'column',
-        margin: 75,
-        options3d: {
-            enabled: true, alpha: 15, beta: 15,
-            depth: 50, viewDistance: 25}};
-
     $.ajax({
         url: "/getStatistics?m=" + "<%= currentMonth %>",
         type: "GET",
         success: function(d) {
             var object = d;
+
             var chart  = new Highcharts.Chart({
-                chart: chartParams,
+                chart: {
+                    renderTo: 'statistics-container',
+                    type: 'column',
+                    margin: 75,
+                    options3d: {
+                        enabled: true, alpha: 15, beta: 15,
+                        depth: 50, viewDistance: 25},
+                    events : {
+                        load : function () {
+                            var series = this.series;
+                            setTimeout(function () {
+                                updateChartSeries(series);
+                            }, 30000);
+                        }
+                    }
+                },
                 title: {text: 'Votes Statistics'},
                 subtitle: {text: 'Current Votes Statistics'},
                 plotOptions: {column: {depth: 25}},
                 series: object.series,
                 xAxis: {categories: object.categories},
             });
+        }
+    });
+};
+
+var updateChartSeries = function(updateSeries)
+{
+    $.ajax({
+        url: "/getStatistics?m=" + "<%= currentMonth %>",
+        type: "GET",
+        success: function(d) {
+            var object = d;
+
+            for (i in updateSeries)
+                for (j in object.series)
+                    if (object.series[j].name == updateSeries[i].name)
+                        updateSeries[i].addPoint([0, object.series[j].data[0]], true, true);
+
+            // repopulate in 30 seconds
+            setTimeout(function() { updateChartSeries(updateSeries); }, 30000);
         }
     });
 };
