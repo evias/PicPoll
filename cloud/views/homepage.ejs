@@ -31,7 +31,7 @@
                 <div><%= pic.get("title") %></div>
                 <div class="smallText"><%= pic.get("description") %></div>
                 <div class="smallText">
-                    <span><%= pic.get("countVotes") %></span><span> Vote(s)</span>
+                    <span class="cnt-votes"><%= pic.get("countVotes") %></span><span> Vote(s)</span>
                 </div>
                 <div class="like"></div>
                 <div class="dislike"></div>
@@ -69,17 +69,30 @@ var initializeSwiper = function()
             if (panel.hasClass("readonlySwipe"))
                 return false;
 
+            var votes = parseInt(panel.find(".cnt-votes").text());
             var picId = panel.attr("data-vote");
             var month = panel.attr("data-month");
 
             if (action == "dislike")
                 return false;
 
+            if (isNaN(votes))
+                votes = 0;
+
             // saveVote when pic is liked
             $.ajax({
                 url: "/saveVote",
                 type:"POST",
-                data: {voting: picId, my: month}});
+                data: {voting: picId, my: month},
+                success: function(data) {
+                    console.log(data);
+                    if (! data.result)
+                        return false;
+                    else {
+                        // update votes count
+                        panel.find(".cnt-votes").html(votes+1);
+                    }
+                }});
         }
     });
 

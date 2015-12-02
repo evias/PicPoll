@@ -52,7 +52,7 @@ Parse.Cloud.define("listPictures", function(request, response)
 
   var pictures = new Parse.Query(models.Picture)
   pictures.equalTo("month", month);
-  pictures.descending("createdAt");
+  pictures.ascending("countVotes");
   pictures.find({
     success: function(pictures)
     {
