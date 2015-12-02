@@ -1,4 +1,10 @@
 
+### [latest](https://github.com/evias/PicPoll/compare/2c86794...HEAD)
+
+* add rewind feature on homepage slider and archives
+* jTinder PR#7: add jTinder.rewind() function for looping feature.
+* document changes history in CHANGELOG.md ; add loading feature to upload.
+
 ### [0.6.1](https://github.com/evias/PicPoll/compare/fe432a1...2c86794)
 
 * implement file upload features, uses Parse /files REST API.

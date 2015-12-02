@@ -57,6 +57,16 @@
 			current_pane = index;
 		},
 
+		rewind: function() {
+			$.each(panes, function(index, panel)
+			{
+				var jqElm = $(panel);
+				jqElm.css("transform", "");
+				jqElm.show();
+				current_pane = index+1;
+			});
+		},
+
 		next: function (action) {
 			/**
 			 * Pull request on jTinder (@see https://github.com/do-web/jTinder)
@@ -70,7 +80,7 @@
 			$that.settings.onBeforeNext
 				&& $that.settings.onBeforeNext(current_pane, action);
 
-			!current_pane && $that.settings.onFinish && $that.settings.onFinish();
+			!current_pane && $that.settings.onFinish && $that.settings.onFinish(this);
 			var showResult = this.showPane(current_pane - 1);
 
 			$that.settings.onAfterNext

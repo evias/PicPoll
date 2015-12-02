@@ -52,8 +52,9 @@ var initializeSwiper = function()
         threshold: 1,
         likeSelector: '.like',
         dislikeSelector: '.dislike',
-        onFinish: function() {
-            $(".wrap.slider, .actions").fadeOut("slow");
+        onFinish: function(instance) {
+            instance.rewind();
+            $(".actions").fadeOut("slow");
         }
     });
 };
